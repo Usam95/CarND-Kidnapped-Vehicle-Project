@@ -22,7 +22,7 @@ using std::string;
 using std::vector;
 using std::normal_distribution;
 
-
+#define MIN_YAW_RATE 0.00001
 
 void ParticleFilter::init(double x, double y, double theta, double std[]) {
   /**
@@ -70,6 +70,28 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
    *  http://www.cplusplus.com/reference/random/default_random_engine/
    */
 
+  normal_distribution<double> x_nd(0, std_pos[0]);
+  normal_distribution<double> y_nd(0, std_pos[1]);
+  normal_distribution<double> theta_nd(0, std_pos[2]);
+
+  for (int i = 0; i < num_particles; i++) {
+
+    // calculate new state
+    if (fabs(yaw_rate) < MIN_YAW_RATE1) {  
+      particles[i].x += velocity * delta_t * cos(particles[i].theta);
+      particles[i].y += velocity * delta_t * sin(particles[i].theta);
+    } 
+    else {
+      particles[i].x += velocity / yaw_rate * (sin(particles[i].theta + yaw_rate*delta_t) - sin(particles[i].theta));
+      particles[i].y += velocity / yaw_rate * (cos(particles[i].theta) - cos(particles[i].theta + yaw_rate*delta_t));
+      particles[i].theta += yaw_rate * delta_t;
+    }
+
+    // add some noise
+    particles[i].x += x_nd(gen);
+    particles[i].y += y_nd(gen);
+    particles[i].theta += theta_nd(gen);
+  }
 }
 
 void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted, 
