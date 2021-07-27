@@ -104,6 +104,39 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
    *   probably find it useful to implement this method and use it as a helper 
    *   during the updateWeights phase.
    */
+  
+    unsigned int num_observations = observations.size();
+    unsigned int num_predictions = predicted.size();
+  
+    for (unsigned int i = 0; i < num_observations; i++) {
+    
+    // grab current observation
+    LandmarkObs o = observations[i];
+
+    // init minimum distance to maximum possible
+    double min_dist = numeric_limits<double>::max();
+
+    // init id of landmark from map placeholder to be associated with the observation
+    int map_id = -1;
+    
+    for (unsigned int j = 0; j < num_predictions); j++) {
+      // grab current prediction
+      LandmarkObs p = predicted[j];
+      
+      // get distance between current/predicted landmarks
+      double cur_dist = dist(o.x, o.y, p.x, p.y);
+
+      // find the predicted landmark nearest the current observed landmark
+      // -> If the "cur_dist" is less than min_dist, stored the id and update mid_dist.
+      if (cur_dist < min_dist) {
+        min_dist = cur_dist;
+        map_id = p.id;
+      }
+    }
+
+    // set the observation's id to the nearest predicted landmark's id
+    observations[i].id = map_id;
+  }
 
 }
 
