@@ -33,6 +33,10 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
    * NOTE: Consult particle_filter.h for more information about this method 
    *   (and others in this file).
    */
+  
+  if (is_initialized) {
+    return; 
+  }
   num_particles = 100;  // TODO: Set the number of particles
   std::default_random_engine gen;
 
@@ -53,6 +57,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 
   std::cout << "The filter is initialized with 100 particles." << std::endl;
 
+  is_initialized = true; 
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], 
